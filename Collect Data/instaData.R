@@ -41,7 +41,13 @@ while(moreAvailable) {
 	length(ids)
 }
 
-instaData = data.frame(ids, link, postType, createdtime, caption, likes);
+#convert date into readable format and extract day of posting and time of posting
+createdtime = as.POSIXct(as.numeric(as.character(createdtime)), origin='1970-01-01')
+createdDay = format(createdtime, '%a')
+createdHour = format(createdtime, '%H')
+
+instaData = data.frame(ids, link, postType, createdtime, createdDay, createdHour, caption, likes);
+
 
 captions = instaData$caption
 captionsSave <- c()
@@ -71,6 +77,7 @@ freqtable = table(dict)
 freqtableSorted<-sort(freqtable, decreasing=TRUE)
 
 #save into a csv if required
-instaData = data.frame(link, postType, createdtime, captionsSave, likes);
-write.table(instaDataSaving, file = "instaData.csv",row.names=FALSE,col.names=TRUE, sep=",")
+instaDataSaving = data.frame(postType, createdDay, createdHour, captionsSave, likes);
 
+write.table(instaDataSaving, file = "instaData.csv",row.names=FALSE,col.names=TRUE, sep=",")
+write.table(freqtableSorted, file = "wordsDict.csv",row.names=FALSE,col.names=FALSE, sep=",")
